@@ -5,14 +5,76 @@
         <link rel="stylesheet" type="text/css" href="/style.css">
 
         <script>
-            // TODO: Page script
+            const updateSpace = (spaceType="cardName") => {
+                const space = document.querySelector("#searchSpace");
+
+                const fillLvl = () => {
+                    let options = "";
+                    for(i = 0; i < 12; i++){
+                        options += `<option value=\"${i + 1}\">${i + 1}</option>`;
+                    }
+                    return options;
+                }
+
+                switch(spaceType){
+                    case "cardName":
+                        space.innerHTML = 
+                        "<input type=\"text\" id=\"nameInput\">" + 
+                        "<label for=\"nameInput\">Enter card name: </label>";
+                        break;
+                    case "atkDefRange":
+                        space.innerHTML = 
+                        "<input type=\"number\" id=\"minAtk\">" + 
+                        "<label for=\"minAtk\">Minimum ATK: " +
+                        "<input type=\"number\" id=\"maxAtk\">" + 
+                        "<label for=\"maxAtk\">Maximum ATK: " +
+                        "<input type=\"number\" id=\"minDef\">" + 
+                        "<label for=\"minDef\">Minimum DEF: " +
+                        "<input type=\"number\" id=\"maxDef\">" + 
+                        "<label for=\"maxDef\">Maximum DEF: ";
+                        break;
+                    case "level":
+                        space.innerHTML = 
+                        "<select id=\"lvlSelect\">" + 
+                        fillLvl() + "</select>" + 
+                        "<label for=\"lvlSelect\">Level: </label>";
+                        break;
+                    case "type":
+                        space.innerHTML = 
+                        "<select id=\"typeSelect\">" + 
+                        "<option value=\"NonEffect\">Non-Effect</option>" + 
+                        "<option value=\"Effect\">Effect</option>" +
+                        "<option value=\"Fusion\">Fusion</option>" +
+                        "<option value=\"Synchro\">Synchro</option>" +
+                        "<option value=\"Xyz\">Xyz</option>" + 
+                        "<option value=\"Pendulum\">Pendulum</option>" +
+                        "<option value=\"Link\">Link</option>" + 
+                        "<option value=\"Spell\">Spell</option>" +
+                        "<option value=\"Trap\">Trap</option>" +
+                        "</select>" + 
+                        "<label for=\"typeSelect\">Select card type: </label>";
+                        break;
+                    case "attribute":
+                        break;
+                    default:
+                        updateSpace();
+                        break;
+                }
+            }
+
+            const init = () => {
+
+            }
         </script>
     </head>
     <body>
         <section id="searcher">
             <select id="searchSelect">
                 <option value="cardName">Card Name</option>
-                <!-- TODO: Add all search endpoints -->
+                <option value="atkDefRange">ATK / DEF Range</option>
+                <option value="level">Level</option>
+                <option value="type">Card Type</option>
+                <option value="attribute">Attribute</option>
             </select>
             <label for="searchSelect">Search method: </label>
             <form id="searchForm">
