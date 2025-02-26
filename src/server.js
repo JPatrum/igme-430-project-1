@@ -2,6 +2,7 @@ const http = require('http');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
+const database = require('./database.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const urlStruct = {
@@ -13,9 +14,10 @@ const urlStruct = {
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
 
+  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+
   // TODO: Parse body & queries
 
-  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
   if (urlStruct[parsedUrl.pathname]) {
     return urlStruct[parsedUrl.pathname](request, response);
   }
@@ -25,4 +27,5 @@ const onRequest = (request, response) => {
 
 http.createServer(onRequest).listen(port, () => {
   console.log(`Listening on 127.0.0.1: ${port}`);
+  console.log(database.db);
 });

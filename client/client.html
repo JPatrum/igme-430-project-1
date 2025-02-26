@@ -1,104 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Yu-Gi-Oh! Database Search</title>
-        <link rel="stylesheet" type="text/css" href="/style.css">
 
-        <script>
-            const updateSpace = (spaceType="cardName") => {
-                const space = document.querySelector("#searchSpace");
+<head>
+    <title>Yu-Gi-Oh! Database Search</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
 
-                const fillLvl = () => {
-                    let options = "";
-                    for(i = 0; i < 12; i++){
-                        options += `<option value=\"${i + 1}\">${i + 1}</option>`;
-                    }
-                    return options;
+    <script type="module">
+        const updateSpace = (spaceType = "cardName") => {
+            const space = document.querySelector("#searchSpace");
+
+            const fillLvl = () => {
+                let options = "";
+                for (i = 0; i < 12; i++) {
+                    options += `<option value=\"${i + 1}\">${i + 1}</option>`;
                 }
+                return options;
+            }
 
-                switch(spaceType){
-                    case "cardName":
-                        space.innerHTML = 
+            switch (spaceType) {
+                case "cardName":
+                    space.innerHTML =
                         "<label for=\"nameInput\">Enter card name: </label>" +
                         "<input type=\"text\" id=\"nameInput\">";
-                        break;
-                    case "atkDefRange":
-                        space.innerHTML = 
+                    break;
+                case "atkDefRange":
+                    space.innerHTML =
                         "<label for=\"minAtk\">Minimum ATK: " +
-                        "<input type=\"number\" id=\"minAtk\">" + 
+                        "<input type=\"number\" id=\"minAtk\">" +
                         "<label for=\"maxAtk\">Maximum ATK: " +
-                        "<input type=\"number\" id=\"maxAtk\">" + 
+                        "<input type=\"number\" id=\"maxAtk\">" +
                         "<label for=\"minDef\">Minimum DEF: " +
-                        "<input type=\"number\" id=\"minDef\">" + 
+                        "<input type=\"number\" id=\"minDef\">" +
                         "<label for=\"maxDef\">Maximum DEF: " +
                         "<input type=\"number\" id=\"maxDef\">";
-                        break;
-                    case "level":
-                        space.innerHTML = 
+                    break;
+                case "level":
+                    space.innerHTML =
                         "<label for=\"lvlSelect\">Level: </label>" +
-                        "<select id=\"lvlSelect\">" + 
+                        "<select id=\"lvlSelect\">" +
                         fillLvl() + "</select>";
-                        break;
-                    case "type":
-                        space.innerHTML = 
+                    break;
+                case "type":
+                    space.innerHTML =
                         "<label for=\"typeSelect\">Select card type: </label>" +
-                        "<select id=\"typeSelect\">" + 
-                        "<option value=\"NonEffect\">Non-Effect</option>" + 
+                        "<select id=\"typeSelect\">" +
+                        "<option value=\"NonEffect\">Non-Effect</option>" +
                         "<option value=\"Effect\">Effect</option>" +
                         "<option value=\"Fusion\">Fusion</option>" +
                         "<option value=\"Synchro\">Synchro</option>" +
-                        "<option value=\"Xyz\">Xyz</option>" + 
+                        "<option value=\"Xyz\">Xyz</option>" +
                         "<option value=\"Pendulum\">Pendulum</option>" +
-                        "<option value=\"Link\">Link</option>" + 
+                        "<option value=\"Link\">Link</option>" +
                         "<option value=\"Spell\">Spell</option>" +
                         "<option value=\"Trap\">Trap</option>" +
                         "</select>";
-                        break;
-                    case "attribute":
-                        space.innerHTML = 
+                    break;
+                case "attribute":
+                    space.innerHTML =
                         "<label for=\"attributeSelect\">Select attribute: </label>" +
-                        "<select id=\"attributeSelect\">" + 
+                        "<select id=\"attributeSelect\">" +
                         "<option value=\"DARK\">DARK</option>" +
                         "<option value=\"LIGHT\">LIGHT</option>" +
                         "<option value=\"FIRE\">FIRE</option>" +
                         "<option value=\"WIND\">WIND</option>" +
                         "<option value=\"WATER\">WATER</option>" +
                         "<option value=\"EARTH\">EARTH</option>" +
-                        "<option value=\"DIVINE\">DIVINE</option>" + 
+                        "<option value=\"DIVINE\">DIVINE</option>" +
                         "</select>";
-                        break;
-                    default:
-                        updateSpace();
-                        break;
-                }
+                    break;
+                default:
+                    updateSpace();
+                    break;
             }
+        }
 
-            const init = () => {
-                const searchMethod = document.querySelector("#searchSelect");
+        const init = () => {
+            const searchMethod = document.querySelector("#searchSelect");
 
-                updateSpace();
+            updateSpace();
 
-                searchMethod.onchange = () => {updateSpace(searchMethod.value)}
-            }
+            searchMethod.onchange = () => { updateSpace(searchMethod.value) }
+        }
 
-            window.onload = init;
-        </script>
-    </head>
-    <body>
-        <section id="searcher">
-            <label for="searchSelect">Search method: </label>
-            <select id="searchSelect">
-                <option value="cardName">Card Name</option>
-                <option value="atkDefRange">ATK / DEF Range</option>
-                <option value="level">Level</option>
-                <option value="type">Card Type</option>
-                <option value="attribute">Attribute</option>
-            </select>
-            <form id="searchForm">
-                <section id="searchSpace"></section>
-                <input type="submit" value="Send">
-            </form>
-        </section>
-        <section id="content"></section>
-    </body>
+        window.onload = init;
+    </script>
+</head>
+
+<body>
+    <section id="searcher">
+        <label for="searchSelect">Search method: </label>
+        <select id="searchSelect">
+            <option value="cardName">Card Name</option>
+            <option value="atkDefRange">ATK / DEF Range</option>
+            <option value="level">Level</option>
+            <option value="type">Card Type</option>
+            <option value="attribute">Attribute</option>
+        </select>
+        <form id="searchForm">
+            <section id="searchSpace"></section>
+            <input type="submit" value="Send">
+        </form>
+    </section>
+    <section id="content"></section>
+</body>
+
 </html>
