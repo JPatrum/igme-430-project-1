@@ -5,7 +5,7 @@
     <title>Yu-Gi-Oh! Database Search</title>
     <link rel="stylesheet" type="text/css" href="/style.css">
 
-    <script type="module">
+    <script>
         const updateSpace = (spaceType = "cardName") => {
             const space = document.querySelector("#searchSpace");
 
@@ -88,6 +88,11 @@
 
 <body>
     <section id="searcher">
+        <label for="methodSelect">Request type: </label>
+        <select id="methodSelect">
+            <option value="get">GET</option>
+            <option value="head">HEAD</option>
+        </select>
         <label for="searchSelect">Search method: </label>
         <select id="searchSelect">
             <option value="cardName">Card Name</option>

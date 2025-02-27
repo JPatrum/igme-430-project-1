@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Yu-Gi-Oh! Card Poster</title>
+        <link rel="stylesheet" type="text/css" href="/style.css">
+
+        <script></script>
+    </head>
+
+    <body>
+        <form id="postForm">
+            <h3>Required Parameters:</h3>
+            <input type="text" id="cardName">
+            <input type="text" id="cardSet">
+            <select id="cardRarity">
+                <option value="Common">Common</option>
+                <option value="Rare">Rare</option>
+                <option value="Super Rare">Super Rare</option>
+                <option value="Ultra Rare">Ultra Rare</option>
+                <option value="Secret Rare">Secret Rare</option>
+                <option value="Starlight Rare">Starlight Rare</option>
+                <option value="Ghost Rare">Ghost Rare</option>
+                <option value="Premium Gold Rare">Premium Gold Rare</option>
+                <option value="Other">Other</option>
+            </select>
+            <input type="text" id="cardNumber">
+            <select id="cardType">
+                <option id="Monster">Monster</option>
+                <option id="Spell">Spell</option>
+                <option id="Trap">Trap</option>
+            </select>
+            <select id="cardAttribute">
+                <option value="DARK">DARK</option>
+                <option value="LIGHT">LIGHT</option>
+                <option value="FIRE">FIRE</option>
+                <option value="WIND">WIND</option>
+                <option value="WATER">WATER</option>
+                <option value="EARTH">EARTH</option>
+                <option value="DIVINE">DIVINE</option>
+                <option value="SPELL">SPELL</option>
+                <option value="TRAP">TRAP</option>
+            </select>
+            <input type="number" id="cardATK">
+            <input type="number" id="cardDEF">
+            <input type="number" id="cardLevel">
+            <section id="typesSection">
+                <div id="typesHolder"></div>
+                <input type="text" id="specificType">
+                <button id="typeAdd">Add</button>
+                <button id="typeClear">Clear</button>
+            </section>
+
+            <p></p>
+            
+            <h3>Optional Parameters:</h3>
+            <input type="text" id="summonedBy">
+            <input type="text" id="ritualRequired">
+            <input type="text" id="ritualMonsterRequired">
+            <input type="number" id="pendulumScale">
+            <input type="number" id="linkVal">
+            <select multiple id="linkArrows">
+                <option value="Top-Left">Top Left</option>
+                <option value="Top-Center">Top Center</option>
+                <option value="Top-Right">Top Right</option>
+                <option value="Middle-Left">Middle Left</option>
+                <option value="Middle-Right">Middle Right</option>
+                <option value="Bottom-Left">Bottom Left</option>
+                <option value="Bottom-Center">Bottom Center</option>
+                <option value="Bottom-Right">Bottom Right</option>
+            </select>
+        </form>
+        <section id="result"></section>
+    </body>
+</html>
