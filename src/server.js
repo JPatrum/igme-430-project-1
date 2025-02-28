@@ -17,7 +17,8 @@ const onRequest = (request, response) => {
 
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
 
-  // TODO: Parse body & queries
+  // TODO: Parse body
+  request.query = Object.fromEntries(parsedUrl.searchParams);
 
   if (urlStruct[parsedUrl.pathname]) {
     return urlStruct[parsedUrl.pathname](request, response);

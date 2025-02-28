@@ -75,8 +75,70 @@
             }
         }
 
+        const handleResponse = async (response) => {
+            const content = document.querySelector("#content");
+
+            let results = await response.json();
+            content.innerHTML = "";
+
+            for (const result of results) {
+                results.innerHTML += `
+                <hr>
+                <h3>${result.Card_Name}</h3>
+                <p>${result.Attribute}</p>
+                <p>${result.Card_Type} Card | Number: ${result.Card_Number}</p>
+                <p><i>${result.Card_Set} | ${result.Rarity}</i></p>
+                `;
+
+                switch (result.Card_Type) {
+                    case "Monster":
+                        let types = result.Types.replace(/\s/g, '').split('/');
+
+                        results.innerHTML += `
+                        <p><b>Monster Data:</b></p>
+                        <p><i>${result.Types}</i></p>
+                        `;
+
+                        if (types.includes('Link')) {
+                            results.innerHTML += `
+                            <p>ATK/LINK: ${result.ATK_LINK}</p>
+                            <p>Arrows: ${result.Link_Arrows}</p>
+                            `;
+                        }
+                        else {
+                            result.innerHTML += `
+                            <p>ATK/DEF: ${result.ATK_DEF}</p>
+                            `;
+                        }
+
+                        if (types.includes('Pendulum')) {
+                            result.innerHTML += `
+                            <p>Scale: ${results.Pendulum_Scale}</p>
+                            `;
+                        }
+
+                        if (types.includes('Xyz')) {
+                            result.innerHTML += `
+                            <p>Rank: ${result.Rank}</p>
+                            `;
+                        }
+                        else {
+                            result.innerHTML += `
+                            <p>Level: ${result.Level}</p>
+                            `;
+                        }
+                        break;
+                    case "Spell":
+                        break;
+                    case "Trap":
+                        break;
+                }
+            }
+        }
+
         const init = () => {
             const searchMethod = document.querySelector("#searchSelect");
+            const sendBtn = document.querySelector("#sendBtn");
 
             updateSpace();
 
@@ -104,7 +166,7 @@
         </select>
         <form id="searchForm">
             <section id="searchSpace"></section>
-            <input type="submit" value="Send">
+            <input type="submit" value="Send" id="sendBtn">
         </form>
     </section>
     <section id="content"></section>
