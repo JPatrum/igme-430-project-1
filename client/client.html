@@ -77,72 +77,94 @@
 
         const handleResponse = async (response) => {
             const content = document.querySelector("#content");
+            content.innerHTML = "LOADING...";
 
-            let results = await response.json();
+            let obj = await response.json();
+            let results = obj.results;
             content.innerHTML = "";
 
             for (const result of results) {
-                results.innerHTML += `
-                <hr>
+                content.innerHTML += `<hr>
+                <div class=\"result\">
                 <h3>${result.Card_Name}</h3>
                 <p>${result.Attribute}</p>
                 <p>${result.Card_Type} Card | Number: ${result.Card_Number}</p>
                 <p><i>${result.Card_Set} | ${result.Rarity}</i></p>
                 `;
 
-                switch (result.Card_Type) {
-                    case "Monster":
-                        let types = result.Types.replace(/\s/g, '').split('/');
+                if (result.Card_Type === "Monster") {
+                    let types = result.Types.replace(/\s/g, '').split('/');
 
-                        results.innerHTML += `
+                    content.innerHTML += `
                         <p><b>Monster Data:</b></p>
                         <p><i>${result.Types}</i></p>
                         `;
 
-                        if (types.includes('Link')) {
-                            results.innerHTML += `
-                            <p>ATK/LINK: ${result.ATK_LINK}</p>
+                    if (types.includes('Link')) {
+                        let ATK_LINK = result.ATK_LINK.replace(/\s/g, '').split('/');
+                        content.innerHTML += `
+                            <p>ATK: ${ATK_LINK[0]}</p>
                             <p>Arrows: ${result.Link_Arrows}</p>
+                            <p>LINK: ${ATK_LINK[1]}</p>
                             `;
-                        }
-                        else {
-                            result.innerHTML += `
+                    }
+                    else {
+                        content.innerHTML += `
                             <p>ATK/DEF: ${result.ATK_DEF}</p>
                             `;
-                        }
-
+                        
                         if (types.includes('Pendulum')) {
-                            result.innerHTML += `
+                            content.innerHTML += `
                             <p>Scale: ${results.Pendulum_Scale}</p>
                             `;
                         }
 
                         if (types.includes('Xyz')) {
-                            result.innerHTML += `
+                            content.innerHTML += `
                             <p>Rank: ${result.Rank}</p>
                             `;
                         }
                         else {
-                            result.innerHTML += `
+                            content.innerHTML += `
                             <p>Level: ${result.Level}</p>
                             `;
                         }
-                        break;
-                    case "Spell":
-                        break;
-                    case "Trap":
-                        break;
+                    }
+
+
                 }
+                else {
+                    content.innerHTML += `
+                        <p>Property: ${result.Property}</p>
+                        `;
+                }
+                content.innerHTML += `</div>`;
             }
+        }
+
+        const testSearch = async () => {
+            let response = await fetch('/test', {
+                method: "get",
+                headers: {
+                    'Accept': 'application/json'
+                },
+            });
+            handleResponse(response);
         }
 
         const init = () => {
             const searchMethod = document.querySelector("#searchSelect");
-            const sendBtn = document.querySelector("#sendBtn");
+            const searchForm = document.querySelector("#searchForm");
 
             updateSpace();
 
+            const initSearch = (e) => {
+                e.preventDefault();
+                testSearch();
+            }
+
             searchMethod.onchange = () => { updateSpace(searchMethod.value) }
+            searchForm.addEventListener('submit', initSearch);
         }
 
         window.onload = init;
@@ -166,7 +188,7 @@
         </select>
         <form id="searchForm">
             <section id="searchSpace"></section>
-            <input type="submit" value="Send" id="sendBtn">
+            <input type="submit" value="Send">
         </form>
     </section>
     <section id="content"></section>

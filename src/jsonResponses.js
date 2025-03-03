@@ -1,3 +1,5 @@
+const database = require('./database.js');
+
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
   const headers = {
@@ -13,6 +15,18 @@ const respondJSON = (request, response, status, object) => {
 
 // TODO: Endpoint functions
 
+const testRes = (request, response) => {
+  const testObj = {
+    results: [],
+  };
+
+  for (let i = 0; i < 500; i++) {
+    testObj.results.push(database.db[i]);
+  }
+
+  respondJSON(request, response, 200, testObj);
+};
+
 const notFound = (request, response) => {
   // create error message for response
   const responseJSON = {
@@ -25,5 +39,6 @@ const notFound = (request, response) => {
 };
 
 module.exports = {
+  testRes,
   notFound,
 };
