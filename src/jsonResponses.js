@@ -13,7 +13,25 @@ const respondJSON = (request, response, status, object) => {
   response.end();
 };
 
-// TODO: Endpoint functions
+const byKey = (request, response) => {
+  // TODO
+}
+
+const byRange = (request, response) => {
+  // TODO
+}
+
+const byLevel = (request, response) => {
+  // TODO
+}
+
+const byType = (request, response) => {
+  // TODO
+}
+
+const byAttribute = (request, response) => {
+  // TODO
+}
 
 const testRes = (request, response) => {
   const testObj = {
@@ -39,6 +57,11 @@ const notFound = (request, response) => {
 };
 
 module.exports = {
+  byKey,
+  byRange,
+  byLevel,
+  byType,
+  byAttribute,
   testRes,
   notFound,
 };

@@ -81,10 +81,10 @@
 
             let obj = await response.json();
             let results = obj.results;
-            content.innerHTML = "";
+            let data = "";
 
             for (const result of results) {
-                content.innerHTML += `<hr>
+                data += `<hr>
                 <div class=\"result\">
                 <h3>${result.Card_Name}</h3>
                 <p>${result.Attribute}</p>
@@ -95,37 +95,37 @@
                 if (result.Card_Type === "Monster") {
                     let types = result.Types.replace(/\s/g, '').split('/');
 
-                    content.innerHTML += `
+                    data += `
                         <p><b>Monster Data:</b></p>
                         <p><i>${result.Types}</i></p>
                         `;
 
                     if (types.includes('Link')) {
                         let ATK_LINK = result.ATK_LINK.replace(/\s/g, '').split('/');
-                        content.innerHTML += `
+                        data += `
                             <p>ATK: ${ATK_LINK[0]}</p>
                             <p>Arrows: ${result.Link_Arrows}</p>
                             <p>LINK: ${ATK_LINK[1]}</p>
                             `;
                     }
                     else {
-                        content.innerHTML += `
+                        data += `
                             <p>ATK/DEF: ${result.ATK_DEF}</p>
                             `;
                         
                         if (types.includes('Pendulum')) {
-                            content.innerHTML += `
+                            data += `
                             <p>Scale: ${results.Pendulum_Scale}</p>
                             `;
                         }
 
                         if (types.includes('Xyz')) {
-                            content.innerHTML += `
+                            data += `
                             <p>Rank: ${result.Rank}</p>
                             `;
                         }
                         else {
-                            content.innerHTML += `
+                            data += `
                             <p>Level: ${result.Level}</p>
                             `;
                         }
@@ -134,12 +134,14 @@
 
                 }
                 else {
-                    content.innerHTML += `
+                    data += `
                         <p>Property: ${result.Property}</p>
                         `;
                 }
-                content.innerHTML += `</div>`;
+                data += `</div>`;
             }
+
+            content.innerHTML = data;
         }
 
         const testSearch = async () => {
