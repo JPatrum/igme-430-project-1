@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/style.css">
 
     <script>
-        const updateSpace = (spaceType = "cardName") => {
+        const updateSpace = (spaceType = "key") => {
             const space = document.querySelector("#searchSpace");
 
             const fillLvl = () => {
@@ -18,10 +18,10 @@
             }
 
             switch (spaceType) {
-                case "cardName":
+                case "key":
                     space.innerHTML =
-                        "<label for=\"nameInput\">Enter card name: </label>" +
-                        "<input type=\"text\" id=\"nameInput\">";
+                        "<label for=\"keyInput\">Enter keyword: </label>" +
+                        "<input type=\"text\" id=\"keyInput\">";
                     break;
                 case "atkDefRange":
                     space.innerHTML =
@@ -78,8 +78,14 @@
         const handleResponse = async (response) => {
             const content = document.querySelector("#content");
             content.innerHTML = "LOADING...";
-
             let obj = await response.json();
+
+            if(response.status !== 200){
+                content.innerHTML = response.message;
+                console.log(response);
+                return;
+            }
+
             let results = obj.results;
             let data = "";
 
@@ -144,8 +150,8 @@
             content.innerHTML = data;
         }
 
-        const testSearch = async () => {
-            let response = await fetch('/test', {
+        const search = async (baseURL, params) => {
+            let response = await fetch(`${baseURL}?${params}`, {
                 method: "get",
                 headers: {
                     'Accept': 'application/json'
@@ -162,7 +168,40 @@
 
             const initSearch = (e) => {
                 e.preventDefault();
-                testSearch();
+                const paramType = searchMethod.value;
+                let baseURL = '';
+                let params = '';
+                switch(paramType){
+                    case 'key':
+                        baseURL = '/key';
+                        const keyInput = searchForm.querySelector("#keyInput");
+                        params = `key=\"${keyInput.value}\"`;
+                        break;
+                    case 'atkDefRange':
+                        baseURL = '/range';
+                        const minAtkInput = searchForm.querySelector("#minATK");
+                        const maxAtkInput = searchForm.querySelector("#maxATK");
+                        const minDefInput = searchForm.querySelector("#minDEF");
+                        const maxDefInput = searchForm.querySelector("#maxDEF");
+                        params = `minATK=${minAtkInput.value}&maxATK=${maxAtkInput.value}&minDEF=${minDefInput.value}&maxDEF=${maxDefInput.value}`;
+                        break;
+                    case 'level':
+                        baseURL = '/level';
+                        const lvlInput = searchForm.querySelector("#lvlSelect");
+                        params = `level=${lvlInput.value}`;
+                        break;
+                    case 'type':
+                        baseURL = '/type';
+                        const typeInput = searchForm.querySelector("#typeSelect");
+                        params = `type=\"${typeInput.value}\"`;
+                        break;
+                    case 'attribute':
+                        baseURL = '/attribute';
+                        const attInput = searchForm.querySelector("#attributeSelect");
+                        params = `attribute=\"${attInput.value}\"`;
+                        break;
+                }
+                search(baseURL, params);
             }
 
             searchMethod.onchange = () => { updateSpace(searchMethod.value) }
@@ -182,7 +221,7 @@
         </select>
         <label for="searchSelect">Search method: </label>
         <select id="searchSelect">
-            <option value="cardName">Card Name</option>
+            <option value="key">Keyword</option>
             <option value="atkDefRange">ATK / DEF Range</option>
             <option value="level">Level</option>
             <option value="type">Card Type</option>

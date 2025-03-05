@@ -1,105 +1,110 @@
 const db = require('../database/ygo_db.json');
 
 const getByKey = (key) => {
-  let r = [];
+  const r = [];
 
-  for(let card of db){
-    if(card.Card_Name.includes(key)){
+  for (let i = 0; i < db.length; i++) {
+    const card = db[i];
+    if (card.Card_Name.includes(key)) {
       r.push(card);
     }
   }
 
   return r;
-}
+};
 
 const getByRange = (minATK, maxATK, minDEF, maxDEF) => {
-  let r = [];
+  const r = [];
 
-  for(let card of db){
-    if(card.Card_Type !== "Monster"){
+  for (let i = 0; i < db.length; i++) {
+    const card = db[i];
+    if (card.Card_Type !== 'Monster') {
       continue;
     }
 
-    let ATK_DEF = card.ATK_DEF.replace(/\s/g, '').split('/');
-    let atk = parseInt(ATK_DEF[0]);
-    let def = parseInt(ATK_DEF[1]);
+    const ATK_DEF = card.ATK_DEF.replace(/\s/g, '').split('/');
+    const atk = parseInt(ATK_DEF[0]);
+    const def = parseInt(ATK_DEF[1]);
 
-    if(atk >= minATK && atk <= maxATK && def >= minDEF && def <= maxDEF){
+    if (atk >= minATK && atk <= maxATK && def >= minDEF && def <= maxDEF) {
       r.push(card);
     }
   }
 
   return r;
-}
+};
 
 const getByLevel = (lvl) => {
-  let r = [];
+  const r = [];
 
-  for(let card of db){
-    if(card.Card_Type !== "Monster"){
+  for (let i = 0; i < db.length; i++) {
+    const card = db[i];
+    if (card.Card_Type !== 'Monster') {
       continue;
     }
 
-    if(card.Level === lvl || card.Rank === lvl){
+    if (card.Level === lvl || card.Rank === lvl) {
       r.push(card);
     }
   }
 
   return r;
-}
+};
 
 const getNonEffects = () => {
-  let r = [];
+  const r = [];
 
-  for(let card of db){
-    if(card.Card_Type !== "Monster"){
+  for (let i = 0; i < db.length; i++) {
+    const card = db[i];
+    if (card.Card_Type !== 'Monster') {
       continue;
     }
 
-    let cTypes = card.Types.replace(/\s/g, '').split('/');
+    const cTypes = card.Types.replace(/\s/g, '').split('/');
 
-    if(!cTypes.includes("Effect")){
+    if (!cTypes.includes('Effect')) {
       r.push(card);
     }
   }
 
   return r;
-}
+};
 
 const getByType = (type) => {
-  if(type === "NonEffect"){
+  if (type === 'NonEffect') {
     return getNonEffects();
   }
 
+  const r = [];
 
-  let r = [];
+  for (let i = 0; i < db.length; i++) {
+    const card = db[i];
+    const cTypes = card.Types.replace(/\s/g, '').split('/');
 
-  for(let card of db){
-    let cTypes = card.Types.replace(/\s/g, '').split('/');
-
-    if(cTypes.includes(type) || card.Type === type){
+    if (cTypes.includes(type) || card.Type === type) {
       r.push(card);
     }
   }
 
   return r;
-}
+};
 
 const getByAttribute = (attribute) => {
-  let r = [];
+  const r = [];
 
-  for(let card of db){
-    if(card.Card_Type !== "Monster"){
+  for (let i = 0; i < db.length; i++) {
+    const card = db[i];
+    if (card.Card_Type !== 'Monster') {
       continue;
     }
 
-    if(card.Attribute === attribute){
+    if (card.Attribute === attribute) {
       r.push(card);
     }
   }
 
   return r;
-}
+};
 
 module.exports = {
   db,

@@ -9,6 +9,11 @@ const urlStruct = {
   '/poster': htmlHandler.getPoster,
   '/style.css': htmlHandler.getCSS,
   '/test': jsonHandler.testRes,
+  '/key': jsonHandler.byKey,
+  '/range': jsonHandler.byRange,
+  '/level': jsonHandler.byLevel,
+  '/type': jsonHandler.byType,
+  '/attribute': jsonHandler.byAttribute,
   notFound: jsonHandler.notFound,
 };
 

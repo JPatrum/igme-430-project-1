@@ -13,25 +13,107 @@ const respondJSON = (request, response, status, object) => {
   response.end();
 };
 
+const concatResults = (uResults) => {
+  const cResults = [];
+  for (let i = 0; i < 500; i++) {
+    if (uResults.length >= i) {
+      return uResults;
+    }
+
+    cResults.push(uResults[i]);
+  }
+  return cResults;
+};
+
+const noResults = (request, response) => {
+  const responseJSON = {
+    message: 'No results matching the parameters were found.',
+    id: 'noContent',
+  };
+  respondJSON(request, response, 204, responseJSON);
+};
+
+const badRequest = (request, response, issue) => {
+  const responseJSON = {
+    message: `There was an issue parsing your request: "${issue}"`,
+    id: 'badRequest',
+  };
+  respondJSON(request, response, 400, responseJSON);
+};
+
 const byKey = (request, response) => {
-  // TODO
-}
+  const { key } = request.query;
+  // TODO: Fix query input as necessary
+  // TODO: Check typeof
+  const responseJSON = {
+    results: concatResults(database.getByKey(key)),
+  };
+  if (responseJSON.results.length == 0) {
+    return noResults(request, response);
+  }
+  return respondJSON(request, response, 200, responseJSON);
+};
 
 const byRange = (request, response) => {
-  // TODO
-}
+  const stats = request.query;
+  // TODO: Fix query input as necessary
+  // TODO: Check typeof
+  if (stats.maxATK < stats.minATK || stats.maxDEF < stats.minDEF) {
+    return badRequest(request, response, 'Maximum ATK/DEF must be greater than or equal to minimum ATK/DEF.');
+  }
+  if (stats.minATK < 0 || stats.maxATK < 0 || stats.minDEF < 0 || stats.maxDEF < 0) {
+    return badRequest(request, response, 'ATK/DEF cannot be negative.');
+  }
+  const responseJSON = {
+    results: concatResults(database.getByRange(stats.minATK, stats.maxATK, stats.minDEF, stats.maxDEF)),
+  };
+  if (responseJSON.results.length == 0) {
+    return noResults(request, response);
+  }
+  return respondJSON(request, response, 200, responseJSON);
+};
 
 const byLevel = (request, response) => {
-  // TODO
-}
+  const { level } = request.query;
+  // TODO: Fix query input as necessary
+  // TODO: Check typeof
+  if (level < 1 || level > 12) {
+    return badRequest(request, response, 'Level/rank cannot fall below 1 or above 12');
+  }
+  const responseJSON = {
+    results: concatResults(database.getByLevel(level)),
+  };
+  if (responseJSON.results.length === 0) {
+    return noResults(request, response);
+  }
+  return respondJSON(request, response, 200, responseJSON);
+};
 
 const byType = (request, response) => {
-  // TODO
-}
+  const { type } = request.query;
+  // TODO: Fix query input as necessary
+  // TODO: Check typeof
+  const responseJSON = {
+    results: concatResults(database.getByType(type)),
+  };
+  if (responseJSON.results.length === 0) {
+    return noResults(request, response);
+  }
+  return respondJSON(request, response, 200, responseJSON);
+};
 
 const byAttribute = (request, response) => {
-  // TODO
-}
+  const { attribute } = request.query;
+  // TODO: Fix query input as necessary
+  // TODO: Check typeof
+  const responseJSON = {
+    results: concatResults(database.getByAttribute(attribute)),
+  };
+  if (responseJSON.results.length === 0) {
+    return noResults(request, response);
+  }
+  return respondJSON(request, response, 200, responseJSON);
+};
 
 const testRes = (request, response) => {
   const testObj = {
