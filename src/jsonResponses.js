@@ -2,6 +2,7 @@ const database = require('./database.js');
 
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
+  console.log(content);
   const headers = {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(content, 'utf8'),
@@ -26,10 +27,7 @@ const concatResults = (uResults) => {
 };
 
 const noResults = (request, response) => {
-  const responseJSON = {
-    message: 'No results matching the parameters were found.',
-    id: 'noContent',
-  };
+  const responseJSON = {};
   respondJSON(request, response, 204, responseJSON);
 };
 
@@ -42,40 +40,41 @@ const badRequest = (request, response, issue) => {
 };
 
 const byKey = (request, response) => {
-  const { key } = request.query;
-  // TODO: Fix query input as necessary
+  const key = request.query.key;
   // TODO: Check typeof
   const responseJSON = {
     results: concatResults(database.getByKey(key)),
   };
-  if (responseJSON.results.length == 0) {
+  if (responseJSON.results.length === 0) {
     return noResults(request, response);
   }
   return respondJSON(request, response, 200, responseJSON);
 };
 
 const byRange = (request, response) => {
-  const stats = request.query;
-  // TODO: Fix query input as necessary
+  const minATK = parseInt(request.query.minATK);
+  const maxATK = parseInt(request.query.maxATK);
+  const minDEF = parseInt(request.query.minDEF);
+  const maxDEF = parseInt(request.query.maxDEF);
   // TODO: Check typeof
-  if (stats.maxATK < stats.minATK || stats.maxDEF < stats.minDEF) {
+  if (maxATK < minATK || maxDEF < minDEF) {
     return badRequest(request, response, 'Maximum ATK/DEF must be greater than or equal to minimum ATK/DEF.');
   }
-  if (stats.minATK < 0 || stats.maxATK < 0 || stats.minDEF < 0 || stats.maxDEF < 0) {
+  if (minATK < 0 || maxATK < 0 || minDEF < 0 || maxDEF < 0) {
     return badRequest(request, response, 'ATK/DEF cannot be negative.');
   }
   const responseJSON = {
-    results: concatResults(database.getByRange(stats.minATK, stats.maxATK, stats.minDEF, stats.maxDEF)),
+    results: concatResults(database.getByRange(minATK, maxATK, minDEF, maxDEF)),
   };
-  if (responseJSON.results.length == 0) {
+  if (responseJSON.results.length === 0) {
     return noResults(request, response);
   }
   return respondJSON(request, response, 200, responseJSON);
 };
 
 const byLevel = (request, response) => {
-  const { level } = request.query;
-  // TODO: Fix query input as necessary
+  const level = parseInt(request.query.level);
+  console.log(level);
   // TODO: Check typeof
   if (level < 1 || level > 12) {
     return badRequest(request, response, 'Level/rank cannot fall below 1 or above 12');
@@ -90,8 +89,7 @@ const byLevel = (request, response) => {
 };
 
 const byType = (request, response) => {
-  const { type } = request.query;
-  // TODO: Fix query input as necessary
+  const type = request.query.type;
   // TODO: Check typeof
   const responseJSON = {
     results: concatResults(database.getByType(type)),
@@ -103,8 +101,7 @@ const byType = (request, response) => {
 };
 
 const byAttribute = (request, response) => {
-  const { attribute } = request.query;
-  // TODO: Fix query input as necessary
+  const attribute = request.query.attribute;
   // TODO: Check typeof
   const responseJSON = {
     results: concatResults(database.getByAttribute(attribute)),

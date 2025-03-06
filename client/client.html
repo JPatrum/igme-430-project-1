@@ -78,11 +78,14 @@
         const handleResponse = async (response) => {
             const content = document.querySelector("#content");
             content.innerHTML = "LOADING...";
+            if(response.status === 204){
+                content.innerHTML = "No results match the given parameters!"
+                return;
+            }
             let obj = await response.json();
 
             if(response.status !== 200){
-                content.innerHTML = response.message;
-                console.log(response);
+                content.innerHTML = obj.message;
                 return;
             }
 
@@ -121,7 +124,7 @@
                         
                         if (types.includes('Pendulum')) {
                             data += `
-                            <p>Scale: ${results.Pendulum_Scale}</p>
+                            <p>Scale: ${result.Pendulum_Scale}</p>
                             `;
                         }
 
@@ -175,14 +178,14 @@
                     case 'key':
                         baseURL = '/key';
                         const keyInput = searchForm.querySelector("#keyInput");
-                        params = `key=\"${keyInput.value}\"`;
+                        params = `key=${keyInput.value}`;
                         break;
                     case 'atkDefRange':
                         baseURL = '/range';
-                        const minAtkInput = searchForm.querySelector("#minATK");
-                        const maxAtkInput = searchForm.querySelector("#maxATK");
-                        const minDefInput = searchForm.querySelector("#minDEF");
-                        const maxDefInput = searchForm.querySelector("#maxDEF");
+                        const minAtkInput = searchForm.querySelector("#minAtk");
+                        const maxAtkInput = searchForm.querySelector("#maxAtk");
+                        const minDefInput = searchForm.querySelector("#minDef");
+                        const maxDefInput = searchForm.querySelector("#maxDef");
                         params = `minATK=${minAtkInput.value}&maxATK=${maxAtkInput.value}&minDEF=${minDefInput.value}&maxDEF=${maxDefInput.value}`;
                         break;
                     case 'level':
@@ -193,12 +196,12 @@
                     case 'type':
                         baseURL = '/type';
                         const typeInput = searchForm.querySelector("#typeSelect");
-                        params = `type=\"${typeInput.value}\"`;
+                        params = `type=${typeInput.value}`;
                         break;
                     case 'attribute':
                         baseURL = '/attribute';
                         const attInput = searchForm.querySelector("#attributeSelect");
-                        params = `attribute=\"${attInput.value}\"`;
+                        params = `attribute=${attInput.value}`;
                         break;
                 }
                 search(baseURL, params);
