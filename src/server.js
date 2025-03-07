@@ -2,12 +2,14 @@ const http = require('http');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
+const imageHandler = require('./imageResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const urlStruct = {
   '/': htmlHandler.getIndex,
   '/poster': htmlHandler.getPoster,
   '/style.css': htmlHandler.getCSS,
+  '/image': imageHandler.getImage,
   '/test': jsonHandler.testRes,
   '/key': jsonHandler.byKey,
   '/range': jsonHandler.byRange,

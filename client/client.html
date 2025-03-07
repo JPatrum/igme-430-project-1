@@ -75,16 +75,45 @@
             }
         }
 
-        const handleResponse = async (response) => {
+        const getCardImage = async (file) => {
+            let response = await fetch(`/image?imageName=${file}`, {
+                method: 'get',
+                headers: {
+                    'Accept': 'image/png'
+                },
+            });
+            return response.blob();
+        }
+
+        const handleResponse = async (response, isGet) => {
             const content = document.querySelector("#content");
             content.innerHTML = "LOADING...";
-            if(response.status === 204){
+
+            if (!isGet) {
+                switch (response.status) {
+                    case 200:
+                        content.innerHTML = "<p>Success! Received results.</p>";
+                        break;
+                    case 204:
+                        content.innerHTML = "<p>Success! Received no results.</p>";
+                        break;
+                    case 400:
+                        content.innerHTML = "<p>Failed to search. Bad request.</p>"
+                        break;
+                    case 404:
+                        content.innerHTML = "<p>Failed to search. Not found.</p>"
+                        break;
+                }
+                return;
+            }
+
+            if (response.status === 204) {
                 content.innerHTML = "No results match the given parameters!"
                 return;
             }
             let obj = await response.json();
 
-            if(response.status !== 200){
+            if (response.status !== 200) {
                 content.innerHTML = obj.message;
                 return;
             }
@@ -93,8 +122,11 @@
             let data = "";
 
             for (const result of results) {
+                const image = await getCardImage(result.Image_Name);
                 data += `<hr>
-                <div class=\"result\">
+                <div class="result">
+                <img class="resultImage" src="${URL.createObjectURL(image)}">
+                <div class="resultData">
                 <h3>${result.Card_Name}</h3>
                 <p>${result.Attribute}</p>
                 <p>${result.Card_Type} Card | Number: ${result.Card_Number}</p>
@@ -121,7 +153,7 @@
                         data += `
                             <p>ATK/DEF: ${result.ATK_DEF}</p>
                             `;
-                        
+
                         if (types.includes('Pendulum')) {
                             data += `
                             <p>Scale: ${result.Pendulum_Scale}</p>
@@ -147,20 +179,21 @@
                         <p>Property: ${result.Property}</p>
                         `;
                 }
-                data += `</div>`;
+                data += `</div></div>`;
             }
 
             content.innerHTML = data;
         }
 
         const search = async (baseURL, params) => {
+            const methodSelect = document.querySelector("#methodSelect");
             let response = await fetch(`${baseURL}?${params}`, {
-                method: "get",
+                method: methodSelect.value,
                 headers: {
                     'Accept': 'application/json'
                 },
             });
-            handleResponse(response);
+            handleResponse(response, methodSelect.value === 'get');
         }
 
         const init = () => {
@@ -174,7 +207,7 @@
                 const paramType = searchMethod.value;
                 let baseURL = '';
                 let params = '';
-                switch(paramType){
+                switch (paramType) {
                     case 'key':
                         baseURL = '/key';
                         const keyInput = searchForm.querySelector("#keyInput");

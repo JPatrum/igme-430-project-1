@@ -2,7 +2,6 @@ const database = require('./database.js');
 
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
-  console.log(content);
   const headers = {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(content, 'utf8'),
