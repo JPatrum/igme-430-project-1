@@ -16,6 +16,7 @@ const urlStruct = {
   '/level': jsonHandler.byLevel,
   '/type': jsonHandler.byType,
   '/attribute': jsonHandler.byAttribute,
+  '/create': jsonHandler.postCard,
   notFound: jsonHandler.notFound,
 };
 

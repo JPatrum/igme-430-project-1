@@ -1,5 +1,9 @@
 const db = require('../database/ygo_db.json');
 
+const addCard = (card) => {
+  db.push(card);
+}
+
 const isNumberUnique = (testNum) => {
   for(let i = 0; i < db.length; i++){
     const card = db[i];
@@ -117,7 +121,7 @@ const getByAttribute = (attribute) => {
 };
 
 module.exports = {
-  db,
+  addCard,
   isNumberUnique,
   getByKey,
   getByRange,

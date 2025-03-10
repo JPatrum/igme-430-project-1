@@ -64,30 +64,97 @@ const postCard = (request, response) => {
   // Placeholder
   newCard.Image_Name = "custom.png";
 
-  /*
-  TODO:
-    Level
-    ATK_DEF
-    Property
-    Pendulum_Scale
-    Rank
-    Link_Arrows
-    ATK_LINK
-  */
-
-  if(params.type === 'Monster'){
-    if(params.monsterTypes){
+  if (params.type === 'Monster') {
+    if (params.monsterTypes) {
       newCard.Types = params.monsterTypes.join(' / ');
     }
-    else{
+    else {
       newCard.Types = "Normal";
     }
 
-    // TODO: LVL/Rank, ATK/DEF/LINK, Arrows, Scale
+    if (params.level) {
+      const lvl = parseInt(params.level);
+      const lvlErr = "Level/Rank must be within a min of 1 and a max of 12.";
+      if (lvl < 1 || lvl > 12) return badRequest(request, response, lvlErr);
+
+      if (newCard.Types.includes('Xyz')) {
+        newCard.Rank = lvl;
+        newCard.Level = '';
+      } else {
+        newCard.Level = lvl;
+        newCard.Rank = '';
+      }
+    } else {
+      if (newCard.Types.includes('Xyz')) {
+        newCard.Rank = 1;
+        newCard.Level = '';
+      } else {
+        newCard.Level = 1;
+        newCard.Rank = '';
+      }
+    }
+
+    const atkDef = [0, 0];
+    const statsErr = "ATK/DEF cannot be negative."
+
+    if (params.ATK) {
+      atkDef[0] = parseInt(params.ATK);
+      if (atkDef[0] < 0) return badRequest(request, response, statsErr);
+    }
+    if (params.DEF) {
+      atkDef[1] = parseInt(params.DEF);
+      if (atkDef[1] < 0) return badRequest(request, response, statsErr);
+    }
+
+    if (newCard.Types.includes('Link')) {
+      if (!params.Link) {
+        const linkErr = "Link-type cards must have at least one selected Link Arrow."
+        return badRequest(request, response, linkErr);
+      }
+      atkDef[1] = parseInt(params.Link);
+      newCard.ATK_DEF = '';
+      newCard.ATK_LINK = atkDef.join(' / ');
+      newCard.Link_Arrows = params.arrows.join(', ')
+    } else {
+      if (params.Link) {
+        const arrowErr = "Non-Link cards cannot have selected Link Arrows."
+        return badRequest(request, response, arrowErr);
+      }
+      newCard.ATK_LINK = '';
+      newCard.Link_Arrows = '';
+      newCard.ATK_DEF = atkDef.join(' / ');
+    }
+
+    if (params.scale) {
+      newCard.Pendulum_Scale = parseInt(params.scale);
+      if (newCard.Pendulum_Scale < 0 || newCard.Pendulum_Scale > 13) {
+        const scaleErr = "Pendulum Scale cannot be negative or exceed 13.";
+        return badRequest(request, response, scaleErr);
+      }
+    } else {
+      newCard.Pendulum_Scale = '';
+    }
+
+    newCard.Property = '';
+  }
+  else {
+    const valid = {
+      'Spell': ['Normal', 'Continuous', 'Field', 'Quick-Play', 'Equip', 'Ritual'],
+      'Trap': ['Normal', 'Continuous', 'Counter'],
+    };
+
+    if (valid[params.type].includes(params.property)) {
+      newCard.Property = params.property;
+    } else {
+      newCard.Property = "Normal";
+    }
   }
 
-  // TODO: Spell & Trap cards w/ Property
-  
+  database.addCard(newCard);
+  const responseJSON = {
+    message: "Card successfully added."
+  }
+  return respondJSON(request, response, 201, responseJSON);
 }
 
 const byKey = (request, response) => {
@@ -179,6 +246,7 @@ const notFound = (request, response) => {
 };
 
 module.exports = {
+  postCard,
   byKey,
   byRange,
   byLevel,
