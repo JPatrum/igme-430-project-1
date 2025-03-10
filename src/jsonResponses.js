@@ -38,9 +38,60 @@ const badRequest = (request, response, issue) => {
   respondJSON(request, response, 400, responseJSON);
 };
 
+const postCard = (request, response) => {
+  const params = request.body;
+  const errMessage = "Missing required parameter."
+  let newCard = {};
+
+  if (!params.number) return badRequest(request, response, errMessage);
+  if (!params.name) return badRequest(request, response, errMessage);
+  if (!params.set) return badRequest(request, response, errMessage);
+  if (!params.rarity) return badRequest(request, response, errMessage);
+  if (!params.type) return badRequest(request, response, errMessage);
+  if (!params.attribute) return badRequest(request, response, errMessage);
+
+  if (!database.isNumberUnique(params.number)) {
+    return respondJSON(request, response, 204, {});
+  }
+
+  newCard.Card_Name = params.name;
+  newCard.Card_Number = params.number;
+  newCard.Card_Set = params.set;
+  newCard.Rarity = params.rarity;
+  newCard.Card_Type = params.type;
+  newCard.Attribute = params.attribute;
+
+  // Placeholder
+  newCard.Image_Name = "custom.png";
+
+  /*
+  TODO:
+    Level
+    ATK_DEF
+    Property
+    Pendulum_Scale
+    Rank
+    Link_Arrows
+    ATK_LINK
+  */
+
+  if(params.type === 'Monster'){
+    if(params.monsterTypes){
+      newCard.Types = params.monsterTypes.join(' / ');
+    }
+    else{
+      newCard.Types = "Normal";
+    }
+
+    // TODO: LVL/Rank, ATK/DEF/LINK, Arrows, Scale
+  }
+
+  // TODO: Spell & Trap cards w/ Property
+  
+}
+
 const byKey = (request, response) => {
   const key = request.query.key;
-  // TODO: Check typeof
   const responseJSON = {
     results: concatResults(database.getByKey(key)),
   };
@@ -55,7 +106,6 @@ const byRange = (request, response) => {
   const maxATK = parseInt(request.query.maxATK);
   const minDEF = parseInt(request.query.minDEF);
   const maxDEF = parseInt(request.query.maxDEF);
-  // TODO: Check typeof
   if (maxATK < minATK || maxDEF < minDEF) {
     return badRequest(request, response, 'Maximum ATK/DEF must be greater than or equal to minimum ATK/DEF.');
   }
@@ -74,7 +124,6 @@ const byRange = (request, response) => {
 const byLevel = (request, response) => {
   const level = parseInt(request.query.level);
   console.log(level);
-  // TODO: Check typeof
   if (level < 1 || level > 12) {
     return badRequest(request, response, 'Level/rank cannot fall below 1 or above 12');
   }
@@ -89,7 +138,6 @@ const byLevel = (request, response) => {
 
 const byType = (request, response) => {
   const type = request.query.type;
-  // TODO: Check typeof
   const responseJSON = {
     results: concatResults(database.getByType(type)),
   };
@@ -101,7 +149,6 @@ const byType = (request, response) => {
 
 const byAttribute = (request, response) => {
   const attribute = request.query.attribute;
-  // TODO: Check typeof
   const responseJSON = {
     results: concatResults(database.getByAttribute(attribute)),
   };
@@ -124,13 +171,10 @@ const testRes = (request, response) => {
 };
 
 const notFound = (request, response) => {
-  // create error message for response
   const responseJSON = {
     message: 'The page you are looking for was not found.',
     id: 'notFound',
   };
-
-  // return a 404 with an error message
   respondJSON(request, response, 404, responseJSON);
 };
 

@@ -45,7 +45,14 @@
                 <option value="DIVINE">DIVINE</option>
                 <option value="SPELL">SPELL</option>
                 <option value="TRAP">TRAP</option>
-            </select><p></p>
+            </select>
+
+            <p></p>
+            <p></p>
+            <p></p>
+            
+            <h3>Optional Parameters:</h3>
+            
             <label for="cardATK">ATK: </label>
             <input type="number" id="cardATK"><p></p>
             <label for="cardDEF">DEF: </label>
@@ -58,19 +65,16 @@
                 <input type="text" id="specificType">
                 <button id="typeAdd">Add</button>
                 <button id="typeClear">Clear</button>
-            </section>
-
-            <p></p>
-            <p></p>
-            <p></p>
-            
-            <h3>Optional Parameters:</h3>
-            <label for="summonedBy">This card is summoned by the effect of: </label>
-            <input type="text" id="summonedBy"><p></p>
-            <label for="ritualRequired">Ritual spell required: </label>
-            <input type="text" id="ritualRequired"><p></p>
-            <label for="ritualMonsterRequired">Ritual monster required: </label>
-            <input type="text" id="ritualMonsterRequired"><p></p>
+            </section><p></p>
+            <select id="property">
+                <option value="Normal">Normal</option>
+                <option value="Continuous">Continuous</option>
+                <option value="Equip">Equip (SPELL ONLY)</option>
+                <option value="Quick-Play">Quick-Play (SPELL ONLY)</option>
+                <option value="Field">Field (SPELL ONLY)</option>
+                <option value="Ritual">Ritual (SPELL ONLY)</option>
+                <option value="Counter">Counter (TRAP ONLY)</option>
+            </select>
             <label for="pendulumScale">Pendulum Scale: </label>
             <input type="number" id="pendulumScale"><p></p>
             <label for="linkVal">LINK: </label>

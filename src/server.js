@@ -19,19 +19,40 @@ const urlStruct = {
   notFound: jsonHandler.notFound,
 };
 
+const send = (request, response, parsedURL) => {
+  if (urlStruct[parsedURL.pathname]) {
+    return urlStruct[parsedURL.pathname](request, response);
+  }
+  return urlStruct.notFound(request, response);
+}
+
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
-
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
 
-  // TODO: Parse body
-  request.query = Object.fromEntries(parsedUrl.searchParams);
-
-  if (urlStruct[parsedUrl.pathname]) {
-    return urlStruct[parsedUrl.pathname](request, response);
+  if (request.method !== 'POST') {
+    request.query = Object.fromEntries(parsedUrl.searchParams);
+    send(request, response, parsedUrl);
   }
+  else {
+    const body = [];
 
-  return urlStruct.notFound(request, response);
+    request.on('error', (err) => {
+      console.dir(err);
+      response.statusCode = 400;
+      response.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString();
+      request.body = query.parse(bodyString);
+      send(request, response, parsedUrl);
+    });
+  }
 };
 
 http.createServer(onRequest).listen(port, () => {

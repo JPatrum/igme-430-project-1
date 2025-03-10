@@ -1,5 +1,15 @@
 const db = require('../database/ygo_db.json');
 
+const isNumberUnique = (testNum) => {
+  for(let i = 0; i < db.length; i++){
+    const card = db[i];
+    if(card.Card_Number === testNum){
+      return false;
+    }
+  }
+  return true;
+}
+
 const getByKey = (key) => {
   const r = [];
 
@@ -108,6 +118,7 @@ const getByAttribute = (attribute) => {
 
 module.exports = {
   db,
+  isNumberUnique,
   getByKey,
   getByRange,
   getByLevel,
