@@ -1,95 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Yu-Gi-Oh! Card Poster</title>
-        <link rel="stylesheet" type="text/css" href="/style.css">
 
-        <script></script>
-    </head>
+<head>
+    <title>Yu-Gi-Oh! Card Poster</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
 
-    <body>
-        <form id="postForm">
-            <h3>Required Parameters:</h3>
-            <label for="cardName">Card Name: </label>
-            <input type="text" id="cardName"><p></p>
-            <label for="cardSet">Card Set: </label>
-            <input type="text" id="cardSet"><p></p>
-            <label for="cardRarity">Rarity: </label>
-            <select id="cardRarity">
-                <option value="Common">Common</option>
-                <option value="Rare">Rare</option>
-                <option value="Super Rare">Super Rare</option>
-                <option value="Ultra Rare">Ultra Rare</option>
-                <option value="Secret Rare">Secret Rare</option>
-                <option value="Starlight Rare">Starlight Rare</option>
-                <option value="Ghost Rare">Ghost Rare</option>
-                <option value="Premium Gold Rare">Premium Gold Rare</option>
-                <option value="Other">Other</option>
-            </select><p></p>
-            <label for="cardNumber">Card Number (make unique!): </label>
-            <input type="text" id="cardNumber"><p></p>
-            <label for="cardType">Type of Card: </label>
-            <select id="cardType">
-                <option id="Monster">Monster</option>
-                <option id="Spell">Spell</option>
-                <option id="Trap">Trap</option>
-            </select><p></p>
-            <label for="cardAttribute">Attribute: </label>
-            <select id="cardAttribute">
-                <option value="DARK">DARK</option>
-                <option value="LIGHT">LIGHT</option>
-                <option value="FIRE">FIRE</option>
-                <option value="WIND">WIND</option>
-                <option value="WATER">WATER</option>
-                <option value="EARTH">EARTH</option>
-                <option value="DIVINE">DIVINE</option>
-                <option value="SPELL">SPELL</option>
-                <option value="TRAP">TRAP</option>
-            </select>
+    <script>
+        // postForm -> form for submission
 
-            <p></p>
-            <p></p>
-            <p></p>
-            
-            <h3>Optional Parameters:</h3>
-            
-            <label for="cardATK">ATK: </label>
-            <input type="number" id="cardATK"><p></p>
-            <label for="cardDEF">DEF: </label>
-            <input type="number" id="cardDEF"><p></p>
-            <lable for="cardLevel">Level/Rank: </lable>
-            <input type="number" id="cardLevel"><p></p>
-            <p>Add your card's types:</p>
-            <section id="typesSection">
-                <div id="typesHolder"></div>
-                <input type="text" id="specificType">
-                <button id="typeAdd">Add</button>
-                <button id="typeClear">Clear</button>
-            </section><p></p>
-            <select id="property">
-                <option value="Normal">Normal</option>
-                <option value="Continuous">Continuous</option>
-                <option value="Equip">Equip (SPELL ONLY)</option>
-                <option value="Quick-Play">Quick-Play (SPELL ONLY)</option>
-                <option value="Field">Field (SPELL ONLY)</option>
-                <option value="Ritual">Ritual (SPELL ONLY)</option>
-                <option value="Counter">Counter (TRAP ONLY)</option>
-            </select>
-            <label for="pendulumScale">Pendulum Scale: </label>
-            <input type="number" id="pendulumScale"><p></p>
-            <p>Select Link Arrows:</p>
-            <select multiple id="linkArrows">
-                <option value="Top-Left">Top Left</option>
-                <option value="Top-Center">Top Center</option>
-                <option value="Top-Right">Top Right</option>
-                <option value="Middle-Left">Middle Left</option>
-                <option value="Middle-Right">Middle Right</option>
-                <option value="Bottom-Left">Bottom Left</option>
-                <option value="Bottom-Center">Bottom Center</option>
-                <option value="Bottom-Right">Bottom Right</option>
-            </select><p></p>
-            <input type="submit" value="Send">
-        </form>
-        <section id="result"></section>
-    </body>
+        // cardName -> name
+        // cardSet -> set
+        // cardRarity -> rarity
+        // cardNumber -> number
+        // cardType -> type
+        // cardAttribute -> attribute
+
+        // cardATK -> ATK
+        // cardDEF -> DEF
+        // cardLevel -> level
+        /*
+            TYPES FUNCTIONALITY
+            --------------------------
+            typesSection
+            typesHolder
+            specificType <- INPUT
+            typeAdd
+            typeClear
+        */
+        // pendulumScale -> scale
+        // linkArrows -> arrows & link (derived from length)
+
+        let myTypes = [];
+
+        // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
+        const serializeObj = (obj) => {
+            let str = [];
+            for(let p in obj){
+                str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
+            }
+            return str.join('&');
+        }
+
+        const getForm = () => {
+            const form = document.querySelector("#postForm");
+            let data = {};
+
+            const cardName = form.querySelector("#cardName");
+            const cardSet = form.querySelector("#cardSet");
+            const cardRarity = form.querySelector("#cardRarity");
+            const cardNumber = form.querySelector("#cardNumber");
+            const cardType = form.querySelector("#cardType");
+            const cardAttribute = form.querySelector("#cardAttribute");
+
+            const cardATK = form.querySelector("#cardATK");
+            const cardDEF = form.querySelector("#cardDEF");
+            const cardLevel = form.querySelector("#cardLevel");
+            const pendulumScale = form.querySelector("#pendulumScale");
+            const linkArrows = form.querySelector("#linkArrows");
+
+            if (cardName.value) data.name = cardName.value;
+            if (cardSet.value) data.set = cardSet.value;
+            if (cardRarity.value) data.rarity = cardRarity.value;
+            if (cardNumber.value) data.number = cardNumber.value;
+            if (cardType.value) data.type = cardType.value;
+            if (cardAttribute.value) data.attribute = cardAttribute.value;
+            if (cardATK.value) data.ATK = cardATK.value;
+            if (cardDEF.value) data.DEF = cardDEF.value;
+            if (cardLevel.value) data.level = cardLevel.value;
+            if (pendulumScale.value) data.scale = pendulumScale.value;
+            if(myTypes) data.monsterTypes = myTypes;
+
+            // https://dev.to/askyt/get-all-selected-values-of-a-multiple-select-field-in-js-5g16
+            let selectedArrows = Array.from(linkArrows.options)
+                .filter(option => option.selected)
+                .map(option => option.value);
+            if(selectedArrows){
+                data.arrows = selectedArrows;
+                data.link = selectedArrows.length;
+            }
+
+            return serializeObj(data);
+        }
+
+        const handleResponse = async (response) => {
+            const result = document.querySelector("#result");
+
+            if(response.status === 204){
+                result.innerHTML = "<p>This card already exists! (Card number is not unique.)</p>";
+                return;
+            }
+
+            let obj = await response.json();
+            result.innerHTML = `<p><b>${obj.message}</b></p>`;
+        }
+
+        const post = async () => {
+            const formData = getForm();
+
+            console.log(formData);
+
+            let response = await fetch('/create', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            });
+
+            handleResponse(response);
+        }
+
+        const updateHolder = (action) => {
+            const holder = document.querySelector("#typesHolder");
+            const value = document.querySelector("#specificType");
+
+            if (action === 'ADD') {
+                if (value.value) {
+                    myTypes.push(value.value);
+                    holder.innerHTML = `<p><i>${myTypes.join(' / ')}</i></p>`
+                }
+            }
+            else if (action === 'CLEAR') {
+                holder.innerHTML = "";
+                myTypes = [];
+            }
+        }
+
+        const init = () => {
+            const typeAdd = document.querySelector("#typeAdd");
+            const typeClear = document.querySelector("#typeClear");
+            const form = document.querySelector("#postForm");
+
+            const addType = (e) => {
+                e.preventDefault();
+                updateHolder('ADD');
+            }
+
+            const clearTypes = (e) => {
+                e.preventDefault();
+                updateHolder('CLEAR');
+            }
+
+            const sendPost = (e) => {
+                e.preventDefault();
+                post();
+            }
+
+            form.addEventListener('submit', sendPost);
+            typeAdd.addEventListener('click', addType);
+            typeClear.addEventListener('click', clearTypes);
+        }
+
+        window.onload = init;
+
+    </script>
+</head>
+
+<body>
+    <form id="postForm">
+        <h3>Required Parameters:</h3>
+        <label for="cardName">Card Name: </label>
+        <input type="text" id="cardName">
+        <p></p>
+        <label for="cardSet">Card Set: </label>
+        <input type="text" id="cardSet">
+        <p></p>
+        <label for="cardRarity">Rarity: </label>
+        <select id="cardRarity">
+            <option value="Common">Common</option>
+            <option value="Rare">Rare</option>
+            <option value="Super Rare">Super Rare</option>
+            <option value="Ultra Rare">Ultra Rare</option>
+            <option value="Secret Rare">Secret Rare</option>
+            <option value="Starlight Rare">Starlight Rare</option>
+            <option value="Ghost Rare">Ghost Rare</option>
+            <option value="Premium Gold Rare">Premium Gold Rare</option>
+            <option value="Other">Other</option>
+        </select>
+        <p></p>
+        <label for="cardNumber">Card Number (make unique!): </label>
+        <input type="text" id="cardNumber">
+        <p></p>
+        <label for="cardType">Type of Card: </label>
+        <select id="cardType">
+            <option id="Monster">Monster</option>
+            <option id="Spell">Spell</option>
+            <option id="Trap">Trap</option>
+        </select>
+        <p></p>
+        <label for="cardAttribute">Attribute: </label>
+        <select id="cardAttribute">
+            <option value="DARK">DARK</option>
+            <option value="LIGHT">LIGHT</option>
+            <option value="FIRE">FIRE</option>
+            <option value="WIND">WIND</option>
+            <option value="WATER">WATER</option>
+            <option value="EARTH">EARTH</option>
+            <option value="DIVINE">DIVINE</option>
+            <option value="SPELL">SPELL</option>
+            <option value="TRAP">TRAP</option>
+        </select>
+
+        <p></p>
+        <p></p>
+        <p></p>
+
+        <h3>Optional Parameters:</h3>
+
+        <label for="cardATK">ATK: </label>
+        <input type="number" id="cardATK">
+        <p></p>
+        <label for="cardDEF">DEF: </label>
+        <input type="number" id="cardDEF">
+        <p></p>
+        <lable for="cardLevel">Level/Rank: </lable>
+        <input type="number" id="cardLevel">
+        <p></p>
+        <p>Add your card's types:</p>
+        <section id="typesSection">
+            <div id="typesHolder"></div>
+            <input type="text" id="specificType">
+            <button id="typeAdd">Add</button>
+            <button id="typeClear">Clear</button>
+        </section>
+        <p></p>
+        <select id="property">
+            <option value="Normal">Normal</option>
+            <option value="Continuous">Continuous</option>
+            <option value="Equip">Equip (SPELL ONLY)</option>
+            <option value="Quick-Play">Quick-Play (SPELL ONLY)</option>
+            <option value="Field">Field (SPELL ONLY)</option>
+            <option value="Ritual">Ritual (SPELL ONLY)</option>
+            <option value="Counter">Counter (TRAP ONLY)</option>
+        </select>
+        <label for="pendulumScale">Pendulum Scale: </label>
+        <input type="number" id="pendulumScale">
+        <p></p>
+        <p>Select Link Arrows:</p>
+        <select multiple id="linkArrows">
+            <option value="Top-Left">Top Left</option>
+            <option value="Top-Center">Top Center</option>
+            <option value="Top-Right">Top Right</option>
+            <option value="Middle-Left">Middle Left</option>
+            <option value="Middle-Right">Middle Right</option>
+            <option value="Bottom-Left">Bottom Left</option>
+            <option value="Bottom-Center">Bottom Center</option>
+            <option value="Bottom-Right">Bottom Right</option>
+        </select>
+        <p></p>
+        <input type="submit" value="Send">
+    </form>
+    <section id="result"></section>
+</body>
+
 </html>

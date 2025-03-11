@@ -40,6 +40,7 @@ const badRequest = (request, response, issue) => {
 
 const postCard = (request, response) => {
   const params = request.body;
+  console.log(params);
   const errMessage = "Missing required parameter."
   let newCard = {};
 
@@ -66,7 +67,7 @@ const postCard = (request, response) => {
 
   if (params.type === 'Monster') {
     if (params.monsterTypes) {
-      newCard.Types = params.monsterTypes.join(' / ');
+      newCard.Types = params.monsterTypes.split(',').join(' / ');
     }
     else {
       newCard.Types = "Normal";
@@ -107,16 +108,16 @@ const postCard = (request, response) => {
     }
 
     if (newCard.Types.includes('Link')) {
-      if (!params.Link) {
+      if (!params.link) {
         const linkErr = "Link-type cards must have at least one selected Link Arrow."
         return badRequest(request, response, linkErr);
       }
-      atkDef[1] = parseInt(params.Link);
+      atkDef[1] = parseInt(params.link);
       newCard.ATK_DEF = '';
       newCard.ATK_LINK = atkDef.join(' / ');
-      newCard.Link_Arrows = params.arrows.join(', ')
+      newCard.Link_Arrows = params.arrows.replace(/,/g, ', ');
     } else {
-      if (params.Link) {
+      if (params.link) {
         const arrowErr = "Non-Link cards cannot have selected Link Arrows."
         return badRequest(request, response, arrowErr);
       }
