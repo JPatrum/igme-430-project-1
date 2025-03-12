@@ -2,17 +2,28 @@ const db = require('../database/ygo_db.json');
 
 const addCard = (card) => {
   db.push(card);
-}
+};
+
+const deleteCard = (number) => {
+  for (let i = 0; i < db.length; i++) {
+    const card = db[i];
+    if (card.Card_Number === number) {
+      db.splice(i, 1);
+      return card.Card_Name;
+    }
+  }
+  return false;
+};
 
 const isNumberUnique = (testNum) => {
-  for(let i = 0; i < db.length; i++){
+  for (let i = 0; i < db.length; i++) {
     const card = db[i];
-    if(card.Card_Number === testNum){
+    if (card.Card_Number === testNum) {
       return false;
     }
   }
   return true;
-}
+};
 
 const getByKey = (key) => {
   const r = [];
@@ -32,16 +43,14 @@ const getByRange = (minATK, maxATK, minDEF, maxDEF) => {
 
   for (let i = 0; i < db.length; i++) {
     const card = db[i];
-    if (card.Card_Type !== 'Monster') {
-      continue;
-    }
+    if (card.Card_Type === 'Monster') {
+      const ATK_DEF = card.ATK_DEF.replace(/\s/g, '').split('/');
+      const atk = parseInt(ATK_DEF[0], 10);
+      const def = parseInt(ATK_DEF[1], 10);
 
-    const ATK_DEF = card.ATK_DEF.replace(/\s/g, '').split('/');
-    const atk = parseInt(ATK_DEF[0]);
-    const def = parseInt(ATK_DEF[1]);
-
-    if (atk >= minATK && atk <= maxATK && def >= minDEF && def <= maxDEF) {
-      r.push(card);
+      if (atk >= minATK && atk <= maxATK && def >= minDEF && def <= maxDEF) {
+        r.push(card);
+      }
     }
   }
 
@@ -53,12 +62,10 @@ const getByLevel = (lvl) => {
 
   for (let i = 0; i < db.length; i++) {
     const card = db[i];
-    if (card.Card_Type !== 'Monster') {
-      continue;
-    }
-
-    if (card.Level === lvl || card.Rank === lvl) {
-      r.push(card);
+    if (card.Card_Type === 'Monster') {
+      if (card.Level === lvl || card.Rank === lvl) {
+        r.push(card);
+      }
     }
   }
 
@@ -70,14 +77,12 @@ const getNonEffects = () => {
 
   for (let i = 0; i < db.length; i++) {
     const card = db[i];
-    if (card.Card_Type !== 'Monster') {
-      continue;
-    }
+    if (card.Card_Type === 'Monster') {
+      const cTypes = card.Types.replace(/\s/g, '').split('/');
 
-    const cTypes = card.Types.replace(/\s/g, '').split('/');
-
-    if (!cTypes.includes('Effect')) {
-      r.push(card);
+      if (!cTypes.includes('Effect')) {
+        r.push(card);
+      }
     }
   }
 
@@ -108,12 +113,10 @@ const getByAttribute = (attribute) => {
 
   for (let i = 0; i < db.length; i++) {
     const card = db[i];
-    if (card.Card_Type !== 'Monster') {
-      continue;
-    }
-
-    if (card.Attribute === attribute) {
-      r.push(card);
+    if (card.Card_Type === 'Monster') {
+      if (card.Attribute === attribute) {
+        r.push(card);
+      }
     }
   }
 
@@ -122,6 +125,7 @@ const getByAttribute = (attribute) => {
 
 module.exports = {
   addCard,
+  deleteCard,
   isNumberUnique,
   getByKey,
   getByRange,

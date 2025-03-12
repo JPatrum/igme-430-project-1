@@ -17,6 +17,7 @@ const urlStruct = {
   '/type': jsonHandler.byType,
   '/attribute': jsonHandler.byAttribute,
   '/create': jsonHandler.postCard,
+  '/delete': jsonHandler.deleteCard,
   notFound: jsonHandler.notFound,
 };
 
@@ -25,7 +26,7 @@ const send = (request, response, parsedURL) => {
     return urlStruct[parsedURL.pathname](request, response);
   }
   return urlStruct.notFound(request, response);
-}
+};
 
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
@@ -34,12 +35,11 @@ const onRequest = (request, response) => {
   if (request.method !== 'POST') {
     request.query = Object.fromEntries(parsedUrl.searchParams);
     send(request, response, parsedUrl);
-  }
-  else {
+  } else {
     const body = [];
 
     request.on('error', (err) => {
-      console.dir(err);
+      console.log(err);
       response.statusCode = 400;
       response.end();
     });
