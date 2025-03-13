@@ -1,5 +1,6 @@
 const database = require('./database.js');
 
+// Generic response that applies for most cases
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify(object);
   const headers = {
@@ -13,23 +14,26 @@ const respondJSON = (request, response, status, object) => {
   response.end();
 };
 
+// In testing, the page could only display up to around 500 results before crashing
+// So here we cap the results at 500
 const concatResults = (uResults) => {
   const cResults = [];
   for (let i = 0; i < 500; i++) {
     if (uResults.length >= i) {
       return uResults;
     }
-
     cResults.push(uResults[i]);
   }
   return cResults;
 };
 
+// Called every time the results array ends up empty, cuts the process short
 const noResults = (request, response) => {
   const responseJSON = {};
   respondJSON(request, response, 204, responseJSON);
 };
 
+// Easily pass in a specific issue for a bad request response message
 const badRequest = (request, response, issue) => {
   const responseJSON = {
     message: `There was an issue parsing your request: "${issue}"`,
@@ -38,11 +42,12 @@ const badRequest = (request, response, issue) => {
   respondJSON(request, response, 400, responseJSON);
 };
 
+// Handles card deletion endpoint
 const deleteCard = (request, response) => {
   const { body } = request;
 
   if (!body.deleteID) {
-    return badRequest(request, response, 'Invalid card number.');
+    return badRequest(request, response, 'Missing card number.');
   }
 
   const number = body.deleteID;
@@ -58,11 +63,13 @@ const deleteCard = (request, response) => {
   return respondJSON(request, response, 204, {});
 };
 
+// Handles card creation endpoint
 const postCard = (request, response) => {
   const params = request.body;
   const errMessage = 'Missing required parameter.';
   const newCard = {};
 
+  // Make sure each required parameter is filled out
   if (!params.number) return badRequest(request, response, errMessage);
   if (!params.name) return badRequest(request, response, errMessage);
   if (!params.set) return badRequest(request, response, errMessage);
@@ -81,9 +88,10 @@ const postCard = (request, response) => {
   newCard.Card_Type = params.type;
   newCard.Attribute = params.attribute;
 
-  // Placeholder
+  // Makes sure the server can get an image to display for custom cards
   newCard.Image_Name = 'custom.png';
 
+  // The rest is just making sure all other filled-out params are valid
   if (params.type === 'Monster') {
     if (params.monsterTypes) {
       newCard.Types = params.monsterTypes.split(',').join(' / ');
@@ -173,6 +181,7 @@ const postCard = (request, response) => {
   return respondJSON(request, response, 201, responseJSON);
 };
 
+// Search by keyword endpoint
 const byKey = (request, response) => {
   const { key } = request.query;
   const responseJSON = {
@@ -184,6 +193,7 @@ const byKey = (request, response) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+// Search by ATK/DEF range endpoint
 const byRange = (request, response) => {
   const minATK = parseInt(request.query.minATK, 10);
   const maxATK = parseInt(request.query.maxATK, 10);
@@ -204,6 +214,7 @@ const byRange = (request, response) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+// Search by level endpoint
 const byLevel = (request, response) => {
   const level = parseInt(request.query.level, 10);
   if (level < 1 || level > 12) {
@@ -218,6 +229,7 @@ const byLevel = (request, response) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+// Search by card type endpoint
 const byType = (request, response) => {
   const { type } = request.query;
   const responseJSON = {
@@ -229,6 +241,7 @@ const byType = (request, response) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+// Search by attribute endpoint
 const byAttribute = (request, response) => {
   const { attribute } = request.query;
   const responseJSON = {
@@ -240,18 +253,7 @@ const byAttribute = (request, response) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
-const testRes = (request, response) => {
-  const testObj = {
-    results: [],
-  };
-
-  for (let i = 0; i < 500; i++) {
-    testObj.results.push(database.db[i]);
-  }
-
-  respondJSON(request, response, 200, testObj);
-};
-
+// 404 error
 const notFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found.',
@@ -268,6 +270,5 @@ module.exports = {
   byLevel,
   byType,
   byAttribute,
-  testRes,
   notFound,
 };

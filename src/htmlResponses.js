@@ -4,18 +4,21 @@ const index = fs.readFileSync(`${__dirname}/../client/client.html`);
 const poster = fs.readFileSync(`${__dirname}/../client/client-poster.html`);
 const css = fs.readFileSync(`${__dirname}/../client/style.css`);
 
+// Search page
 const getIndex = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
   response.write(index);
   response.end();
 };
 
+// Post page
 const getPoster = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
   response.write(poster);
   response.end();
 };
 
+// CSS file (currently blank but we get it anyway)
 const getCSS = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/css' });
   response.write(css);

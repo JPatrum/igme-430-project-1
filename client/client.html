@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/style.css">
 
     <script>
+        // Swaps the HTML of the search space based on user input
         const updateSpace = (spaceType = "key") => {
             const space = document.querySelector("#searchSpace");
 
@@ -75,6 +76,7 @@
             }
         }
 
+        // Requests an image from the server (for displaying cards)
         const getCardImage = async (file) => {
             let response = await fetch(`/image?imageName=${file}`, {
                 method: 'get',
@@ -85,10 +87,12 @@
             return response.blob();
         }
 
+        // Displays results upon receiving response
         const handleResponse = async (response, isGet) => {
             const content = document.querySelector("#content");
             content.innerHTML = "LOADING...";
 
+            // Handle HEAD requests
             if (!isGet) {
                 switch (response.status) {
                     case 200:
@@ -107,16 +111,21 @@
                 return;
             }
 
+            // 204 with a GET request means no results were found
             if (response.status === 204) {
                 content.innerHTML = "No results match the given parameters!"
                 return;
             }
+
             let obj = await response.json();
 
+            // The only other possibility is 400, for which we display the error message
             if (response.status !== 200) {
                 content.innerHTML = obj.message;
                 return;
             }
+
+            // The rest handles display for a 200 GET request
 
             let results = obj.results;
             let data = "";
@@ -185,6 +194,7 @@
             content.innerHTML = data;
         }
 
+        // Constructs and sends a request for a URL & given queries
         const search = async (baseURL, params) => {
             const methodSelect = document.querySelector("#methodSelect");
             let response = await fetch(`${baseURL}?${params}`, {
@@ -200,8 +210,9 @@
             const searchMethod = document.querySelector("#searchSelect");
             const searchForm = document.querySelector("#searchForm");
 
-            updateSpace();
+            updateSpace(); // Just cuts down on the amount of HTML in this script
 
+            // Gets the appropriate URL and queries, then sends them to the search function
             const initSearch = (e) => {
                 e.preventDefault();
                 const paramType = searchMethod.value;
