@@ -55,7 +55,7 @@
                 let selectedArrows = Array.from(linkArrows.options)
                     .filter(option => option.selected)
                     .map(option => option.value);
-                if (selectedArrows) {
+                if (selectedArrows.length > 0) {
                     data.arrows = selectedArrows;
                     data.link = selectedArrows.length;
                 }
