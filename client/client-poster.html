@@ -9,6 +9,7 @@
         let myTypes = [];
 
         // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
+        // Converts an object to a query string to be used as the body
         const serializeObj = (obj) => {
             let str = [];
             for (let p in obj) {
@@ -17,6 +18,7 @@
             return str.join('&');
         }
 
+        // Constructs an object representing the new card to be added
         const getForm = (url) => {
             let data = {};
             if (url === '/create') {
@@ -58,6 +60,7 @@
                     data.link = selectedArrows.length;
                 }
             }
+            // If we're deleting a card, we just need the card number
             else if (url === '/delete') {
                 const number = document.querySelector("#deleteNum");
                 data.deleteID = number.value;
@@ -65,9 +68,11 @@
             return serializeObj(data);
         }
 
+        // Handles display for both endpoints
         const handleResponse = async (response, url) => {
             const result = document.querySelector("#result");
 
+            // 204 means either we're adding a card that already exists, or deleting a card that doesn't
             if (response.status === 204) {
                 if (url === '/create') {
                     result.innerHTML = "<p>This card already exists! (Card number is not unique.)</p>";
@@ -89,7 +94,8 @@
                 `;
             }
         }
-
+        
+        // Get the appropriate body data and send post request
         const post = async () => {
             const url = document.querySelector('#postType').value;
             const formData = getForm(url);
@@ -106,6 +112,7 @@
             handleResponse(response, url);
         }
 
+        // Functionality for adding to/clearing the monster types array and display
         const updateHolder = (action) => {
             const holder = document.querySelector("#typesHolder");
             const value = document.querySelector("#specificType");
@@ -122,6 +129,7 @@
             }
         }
 
+        // Swaps the HTML of the page depending on if we're adding or deleting a card
         const updatePoster = () => {
             const poster = document.querySelector('#poster');
             const type = document.querySelector('#postType').value;
@@ -229,7 +237,7 @@
         }
 
         const init = () => {
-            updatePoster();
+            updatePoster(); // Just cuts down on the amount of HTML in the script
 
             const typeAdd = document.querySelector("#typeAdd");
             const typeClear = document.querySelector("#typeClear");

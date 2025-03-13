@@ -10,7 +10,6 @@ const urlStruct = {
   '/poster': htmlHandler.getPoster,
   '/style.css': htmlHandler.getCSS,
   '/image': imageHandler.getImage,
-  '/test': jsonHandler.testRes,
   '/key': jsonHandler.byKey,
   '/range': jsonHandler.byRange,
   '/level': jsonHandler.byLevel,
@@ -21,6 +20,7 @@ const urlStruct = {
   notFound: jsonHandler.notFound,
 };
 
+// Once the request is properly constructed, call the appropriate handler function
 const send = (request, response, parsedURL) => {
   if (urlStruct[parsedURL.pathname]) {
     return urlStruct[parsedURL.pathname](request, response);
@@ -28,6 +28,7 @@ const send = (request, response, parsedURL) => {
   return urlStruct.notFound(request, response);
 };
 
+// Constructs either the body or queries, depending on the request method
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
