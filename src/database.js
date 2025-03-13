@@ -47,8 +47,8 @@ const getByKey = (key) => {
 
   return r;
 
-  // There's a card in the db just named "7" that was accidentally read as an int instead of a string
-  // Since this function uses string.includes, that one card caused this function to crash the API
+  // There's a card in the db just named 7 that was accidentally read as an int instead of a string
+  // Since this function uses string.includes, that card caused this function to crash the API
 };
 
 // Filter by ATK/DEF range
