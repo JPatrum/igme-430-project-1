@@ -97,7 +97,8 @@ const getNonEffects = () => {
     if (card.Card_Type === 'Monster') {
       const cTypes = card.Types.replace(/\s/g, '').split('/');
 
-      if (!cTypes.includes('Effect')) {
+      // Tuner monsters sometimes have effects but not the Effect type, so we filter them out too
+      if (!cTypes.includes('Effect') && !cTypes.includes('Tuner')) {
         r.push(card);
       }
     }
@@ -106,8 +107,9 @@ const getNonEffects = () => {
   return r;
 };
 
-// Filter by monster type
+// Filter by card type
 const getByType = (type) => {
+
   if (type === 'NonEffect') {
     return getNonEffects();
   }
@@ -118,7 +120,7 @@ const getByType = (type) => {
     const card = db[i];
     const cTypes = card.Types.replace(/\s/g, '').split('/');
 
-    if (cTypes.includes(type) || card.Type === type) {
+    if (cTypes.includes(type) || card.Card_Type === type) {
       r.push(card);
     }
   }
